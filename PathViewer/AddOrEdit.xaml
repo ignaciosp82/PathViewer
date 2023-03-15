@@ -1,0 +1,103 @@
+﻿<local:PopupBase x:Class="PathViewer.AddOrEdit"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:local="clr-namespace:PathViewer"
+    mc:Ignorable="d"
+    MinWidth="160"
+    d:DataContext="{d:DesignInstance local:AddOrEditViewModel, IsDesignTimeCreatable=True}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <ComboBox ItemsSource="{Binding ItemTypes}"
+                  DisplayMemberPath="Name"
+                  SelectedValuePath="Type"
+                  SelectedItem="{Binding Type}" />
+
+        <StackPanel Grid.Row="1" Orientation="Vertical">
+            <StackPanel Orientation="Horizontal"
+                Visibility="{Binding ValueLabels[0], Converter={StaticResource ValueConverter}}">
+                <TextBlock Style="{StaticResource label}"
+                           Text="{Binding ValueLabels[0]}" />
+                <TextBox Style="{StaticResource textField}"
+                         PreviewTextInput="OnNumericInput"
+                         Text="{Binding Values[0].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                Visibility="{Binding ValueLabels[1], Converter={StaticResource ValueConverter}}">
+                <TextBlock Style="{StaticResource label}"
+                           Text="{Binding ValueLabels[1]}" />
+                <TextBox Style="{StaticResource textField}"
+                         PreviewTextInput="OnNumericInput"
+                         Text="{Binding Values[1].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                Visibility="{Binding ValueLabels[2], Converter={StaticResource ValueConverter}}">
+                <TextBlock Style="{StaticResource label}"
+                           Text="{Binding ValueLabels[2]}" />
+                <TextBox Style="{StaticResource textField}"
+                         PreviewTextInput="OnNumericInput"
+                         Text="{Binding Values[2].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                Visibility="{Binding FlagLabels[0], Converter={StaticResource ValueConverter}}">
+                <TextBlock Style="{StaticResource label}"
+                           Text="{Binding FlagLabels[0]}" />
+                <CheckBox IsChecked="{Binding Flags[0].Value}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                Visibility="{Binding FlagLabels[1], Converter={StaticResource ValueConverter}}">
+                <TextBlock Style="{StaticResource label}"
+                           Text="{Binding FlagLabels[1]}" />
+                <CheckBox IsChecked="{Binding Flags[1].Value}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                Visibility="{Binding ValueLabels[3], Converter={StaticResource ValueConverter}}">
+                <TextBlock Style="{StaticResource label}"
+                           Text="{Binding ValueLabels[3]}" />
+                <TextBox Style="{StaticResource textField}"
+                         PreviewTextInput="OnNumericInput"
+                         Text="{Binding Values[3].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                Visibility="{Binding ValueLabels[4], Converter={StaticResource ValueConverter}}">
+                <TextBlock Style="{StaticResource label}"
+                           Text="{Binding ValueLabels[4]}" />
+                <TextBox Style="{StaticResource textField}"
+                         PreviewTextInput="OnNumericInput"
+                         Text="{Binding Values[4].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal"
+                Visibility="{Binding ValueLabels[5], Converter={StaticResource ValueConverter}}">
+                <TextBlock Style="{StaticResource label}"
+                           Text="{Binding ValueLabels[5]}" />
+                <TextBox Style="{StaticResource textField}"
+                         PreviewTextInput="OnNumericInput"
+                         Text="{Binding Values[5].Value, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            </StackPanel>
+        </StackPanel>
+
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock>Result</TextBlock>
+            <TextBox Grid.Column="1" Text="{Binding Result, Mode=OneWay}" IsReadOnly="True" HorizontalAlignment="Stretch" />
+        </Grid>
+
+        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Content="Cancel" IsCancel="True" />
+            <Button Content="OK" IsDefault="True" Command="{Binding OkCommand}" />
+        </StackPanel>
+    </Grid>
+</local:PopupBase>
