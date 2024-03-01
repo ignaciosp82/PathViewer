@@ -51,36 +51,43 @@ public partial class AddOrEditViewModel : ViewModelBase
                 Values[3].Value = cb.Control2Y;
                 Values[4].Value = cb.EndX;
                 Values[5].Value = cb.EndY;
+                Flags[0].Value = cb.IsAbsolute;
                 break;
             case ItemType.EllipticalArc:
                 var ea = (EllipticalArc)command;
                 Values[0].Value = ea.SizeX;
                 Values[1].Value = ea.SizeY;
-                Values[3].Value = ea.RotationAngle;
-                Flags[0].Value = ea.IsLargeArc;
-                Flags[1].Value = ea.IsPositiveSweepDirection;
-                Values[4].Value = ea.EndX;
-                Values[5].Value= ea.EndY;
+                Values[2].Value = ea.RotationAngle;
+                Flags[0].Value = ea.IsAbsolute;
+                Flags[1].Value = ea.IsLargeArc;
+                Flags[2].Value = ea.IsPositiveSweepDirection;                
+                Values[3].Value = ea.EndX;
+                Values[4].Value= ea.EndY;
                 break;
             case ItemType.HorizontalLine:
-                Values[0].Value = ((HorizontalLine)command).EndX;
+                var hl = (HorizontalLine)command;
+                Values[0].Value = hl.EndX;
+                Flags[0].Value = hl.IsAbsolute;
                 break;
             case ItemType.Line:
                 var l = (Line)command;
                 Values[0].Value = l.EndX;
                 Values[1].Value = l.EndY;
+                Flags[0].Value = l.IsAbsolute;
                 break;
             case ItemType.Move:
                 var m = (Move)command;
                 Values[0].Value = m.X;
                 Values[1].Value = m.Y;
+                Flags[0].Value = m.IsAbsolute;
                 break;
-            case ItemType.QudraticBezier:
+            case ItemType.QuadraticBezier:
                 var qb = (QuadraticBezier)command;
                 Values[0].Value = qb.ControlX;
                 Values[1].Value = qb.ControlY;
                 Values[2].Value = qb.EndX;
                 Values[3].Value = qb.EndY;
+                Flags[0].Value = qb.IsAbsolute;
                 break;
             case ItemType.SmoothCubicBezier:
                 var scb = (SmoothCubicBezier)command;
@@ -88,15 +95,18 @@ public partial class AddOrEditViewModel : ViewModelBase
                 Values[1].Value = scb.Control2Y;
                 Values[2].Value = scb.EndX;
                 Values[3].Value = scb.EndY;
+                Flags[0].Value = scb.IsAbsolute;
                 break;
             case ItemType.SmoothQuadraticBezier:
                 var sqb = (SmoothQuadraticBezier)command;
                 Values[0].Value = sqb.EndX;
                 Values[1].Value = sqb.EndY;
+                Flags[0].Value = sqb.IsAbsolute;
                 break;
             case ItemType.VerticalLine:
                 var vl = (VerticalLine)command;
                 Values[0].Value = vl.EndY;
+                Flags[0].Value = vl.IsAbsolute;
                 break;
             default:
                 break;
@@ -122,58 +132,65 @@ public partial class AddOrEditViewModel : ViewModelBase
     }
 
     private const int ValueCount = 6;
-    private const int FlagCount = 2;
+    private const int FlagCount = 3;
 
     #region View Model Properties
-    public ItemTypeItem[] ItemTypes { get; } = new[]
-    {
+    public ItemTypeItem[] ItemTypes { get; } =
+    [
         new ItemTypeItem("Close", ItemType.Close),
         new ItemTypeItem(
             "Cubic Bezier",
             ItemType.CubicBezier,
-            new[]
-            {
+            [
                 "Control Point 1 X",
                 "Control Point 1 Y",
                 "Control Point 2 X",
                 "Control Point 2 Y",
                 "End X",
                 "End Y"
-            }),
+            ],
+            ["Absolute Position"]),
         new ItemTypeItem(
             "Elliptical Arc",
             ItemType.EllipticalArc,
-            new[] { "Size X", "Size Y", "Rotation Angle", "End X", "End Y" },
-            new[] { "Large Arc", "Positive Sweep Direction"}),
+            ["Size X", "Size Y", "Rotation Angle", "End X", "End Y"],
+            ["Absolute Position", "Large Arc", "Positive Sweep Direction"]),
         new ItemTypeItem(
             "Horizontal Line",
             ItemType.HorizontalLine,
-            new[] { "End X" }),
+            ["End X"],
+            ["Absolute Position"]),
         new ItemTypeItem(
             "Line",
             ItemType.Line,
-            new[] { "End X", "End Y"}),
+            ["End X", "End Y"],
+            ["Absolute Position"]),
         new ItemTypeItem(
             "MovePath",
             ItemType.Move,
-            new[] { "X", "Y" }),
+            ["X", "Y"],
+            ["Absolute Position"]),
         new ItemTypeItem(
             "Qudratic Bezier",
-            ItemType.QudraticBezier,
-            new[] { "Control X", "Control Y", "End X", "End Y" }),
+            ItemType.QuadraticBezier,
+            ["Control X", "Control Y", "End X", "End Y"],
+            ["Absolute Position"]),
         new ItemTypeItem(
             "Smooth Cubic Bezier",
             ItemType.SmoothCubicBezier,
-            new[] { "Control 2 X", "Control 2 Y", "End X", "End Y"}),
+            ["Control 2 X", "Control 2 Y", "End X", "End Y"],
+            ["Absolute Position"]),
         new ItemTypeItem(
             "Smooth Quadratic Bezier",
             ItemType.SmoothQuadraticBezier,
-            new[] { "End X", "End Y" }),
+            ["End X", "End Y"],
+            ["Absolute Position"]),
         new ItemTypeItem(
             "Vertical Line",
             ItemType.VerticalLine,
-            new[] { "End Y" })
-    };
+            ["End Y"],
+            ["Absolute Position"])
+    ];
 
     private ItemTypeItem _type;
     public ItemTypeItem Type
@@ -204,8 +221,8 @@ public partial class AddOrEditViewModel : ViewModelBase
         }
     }
 
-    public List<ValueItem> Values { get; } = new();
-    public List<FlagItem> Flags { get; } = new();
+    public List<ValueItem> Values { get; } = [];
+    public List<FlagItem> Flags { get; } = [];
 
     [ObservableProperty]
     private string?[] _valueLabels =
@@ -241,41 +258,64 @@ public partial class AddOrEditViewModel : ViewModelBase
             Control2X = Values[2].Value,
             Control2Y = Values[3].Value,
             EndX = Values[4].Value,
-            EndY = Values[5].Value
+            EndY = Values[5].Value,
+            IsAbsolute = Flags[0].Value
         },
         ItemType.EllipticalArc => new EllipticalArc
         {
             SizeX = Values[0].Value,
             SizeY = Values[1].Value,
             RotationAngle = Values[2].Value,
-            IsLargeArc = Flags[0].Value,
-            IsPositiveSweepDirection = Flags[1].Value,
+            IsAbsolute = Flags[0].Value,
+            IsLargeArc = Flags[1].Value,
+            IsPositiveSweepDirection = Flags[2].Value,
             EndX = Values[3].Value,
             EndY = Values[4].Value
         },
-        ItemType.HorizontalLine => new HorizontalLine { EndX = Values[0].Value },
-        ItemType.Line => new Line { EndX = Values[0].Value, EndY = Values[1].Value },
-        ItemType.Move => new Move { X = Values[0].Value, Y = Values[1].Value },
-        ItemType.QudraticBezier => new QuadraticBezier
+        ItemType.HorizontalLine => new HorizontalLine
+        {
+            EndX = Values[0].Value,
+            IsAbsolute = Flags[0].Value,
+        },
+        ItemType.Line => new Line
+        {
+            EndX = Values[0].Value,
+            EndY = Values[1].Value,
+            IsAbsolute = Flags[0].Value,
+        },
+        ItemType.Move => new Move
+        {
+            X = Values[0].Value,
+            Y = Values[1].Value,
+            IsAbsolute = Flags[0].Value,
+        },
+        ItemType.QuadraticBezier => new QuadraticBezier
         {
             ControlX = Values[0].Value,
             ControlY = Values[1].Value,
             EndX = Values[2].Value,
-            EndY = Values[3].Value
+            EndY = Values[3].Value,
+            IsAbsolute = Flags[0].Value,
         },
         ItemType.SmoothCubicBezier => new SmoothCubicBezier
         {
             Control2X = Values[0].Value,
             Control2Y = Values[1].Value,
             EndX = Values[2].Value,
-            EndY = Values[3].Value
+            EndY = Values[3].Value,
+            IsAbsolute = Flags[0].Value,
         },
         ItemType.SmoothQuadraticBezier => new SmoothQuadraticBezier
         {
             EndX = Values[0].Value,
             EndY = Values[1].Value,
+            IsAbsolute = Flags[0].Value,
         },
-        ItemType.VerticalLine => new VerticalLine { EndY = Values[0].Value },
+        ItemType.VerticalLine => new VerticalLine
+        {
+            EndY = Values[0].Value,
+            IsAbsolute = Flags[0].Value,
+        },
         _ => throw new InvalidOperationException($"Undefined path command [{(Type?.Type.ToString() ?? "(null)")}]")
     };
 

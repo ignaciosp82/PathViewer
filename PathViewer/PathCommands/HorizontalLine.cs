@@ -1,14 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using System.Windows;
 
 namespace PathViewer.PathCommands;
 
 public partial class HorizontalLine : PathCommand
 {
-    public override string CommandChar => "H";
+    public const string CommandChar = "h";
+
+    public override string Char { get; protected set; } = CommandChar;
     public override ItemType Type => ItemType.HorizontalLine;
 
     [ObservableProperty]
@@ -28,25 +30,22 @@ public partial class HorizontalLine : PathCommand
         EndX += distX;
     }
 
-    private static readonly Regex _regex = new(@"[Hh]([-+]?(?:\d+\.\d+|\.\d+|\d+))");
+    private static readonly Regex _regex = new(@"([Hh])\s*([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)");
 
-    public static bool TryParse(
-        string input,
-        [MaybeNullWhen(false)] out HorizontalLine result)
+    public static new HorizontalLine Parse(string input)
     {
         Match match= _regex.Match(input);
         if (match.Success)
         {
-            result = new()
+            return new()
             {
-                EndX = double.Parse(match.Groups[1].Value)
+                IsAbsolute = match.Groups[1].Value != CommandChar,
+                EndX = double.Parse(match.Groups[2].Value)
             };
-            return true;
         }
-        result = null;
-        return false;
+        throw new ArgumentException($"Not a {nameof(HorizontalLine)} command");
     }
 
     public override string ToString() =>
-        $"{CommandChar}{EndX}";
+        $"{Char}{EndX}";
 }

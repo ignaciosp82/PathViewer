@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
@@ -7,7 +8,9 @@ namespace PathViewer.PathCommands;
 
 public partial class VerticalLine : PathCommand
 {
-    public override string CommandChar => "V";
+    public const string CommandChar = "v";
+
+    public override string Char { get; protected set; } = CommandChar;
     public override ItemType Type => ItemType.VerticalLine;
 
     [ObservableProperty]
@@ -27,25 +30,22 @@ public partial class VerticalLine : PathCommand
         EndY += distY;
     }
 
-    private static readonly Regex _regex = new(@"[Vv]([-+]?(?:\d+\.\d+|\.\d+|\d+))");
+    private static readonly Regex _regex = new(@"([Vv])\s*([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)");
 
-    public static bool TryParse(
-        string input, 
-        [MaybeNullWhen(false)] out VerticalLine value)
+    public static new VerticalLine Parse(string input)
     {
         Match match = _regex.Match(input);
         if (match.Success)
         {
-            value = new()
+            return new()
             {
-                EndY = double.Parse(match.Groups[1].Value)
+                IsAbsolute = match.Groups[1].Value == CommandChar.ToUpper(),
+                EndY = double.Parse(match.Groups[2].Value)
             };
-            return true;
         }
-        value = null;
-        return false;
+        throw new ArgumentException($"Not a {nameof(VerticalLine)} command");
     }
 
     public override string ToString() =>
-        $"{CommandChar}{EndY}";
+        $"{Char}{EndY}";
 }

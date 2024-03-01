@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
@@ -7,7 +8,9 @@ namespace PathViewer.PathCommands;
 
 public partial class Move : PathCommand
 {
-    public override string CommandChar => "M";
+    public const string CommandChar = "m";
+
+    public override string Char { get; protected set; } = CommandChar;
     public override ItemType Type => ItemType.Move;
 
     [ObservableProperty]
@@ -35,29 +38,26 @@ public partial class Move : PathCommand
         Y += distY;
     }
 
-    private static readonly Regex _regex = new(
-    @"[Mm][\s]*      ([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))",
-    RegexOptions.IgnorePatternWhitespace);
+    private static readonly Regex _regex = new(@"
+        ([Mm])\s*([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)",
+        RegexOptions.IgnorePatternWhitespace);
 
-    public static bool TryParse(
-    string input,
-    [MaybeNullWhen(false)] out Move result)
+    public static new Move Parse(string input)
     {
         Match match = _regex.Match(input);
         if (match.Success)
         {
-            result = new()
+            return new()
             {
-                X = double.Parse(match.Groups[1].Value),
-                Y = double.Parse(match.Groups[2].Value)
+                IsAbsolute = match.Groups[1].Value != CommandChar,
+                X = double.Parse(match.Groups[2].Value),
+                Y = double.Parse(match.Groups[3].Value)
             };
-            return true;
         }
-        result = null;
-        return false;
+        throw new ArgumentException($"Not a {nameof(Move)} command");
     }
 
     public override string ToString() =>
-        $"{CommandChar}{X},{Y}";
+        $"{Char}{X},{Y}";
 }

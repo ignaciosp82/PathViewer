@@ -7,9 +7,22 @@ namespace PathViewer.PathCommands;
 
 public abstract class PathCommand : ObservableObject
 {
-    public abstract string CommandChar { get; }
+    public abstract string Char { get; protected set; }
 
     public abstract ItemType Type { get; }
+
+    private bool _isAbsolute;
+    public bool IsAbsolute
+    {
+        get => _isAbsolute;
+        set
+        {
+            if (SetProperty(ref _isAbsolute, value))
+            {
+                Char = value ? Char.ToUpper() : Char.ToLower();
+            }
+        }
+    }
 
     // Used to calculate size and position.
     public virtual bool HasX => false;
@@ -33,31 +46,21 @@ public abstract class PathCommand : ObservableObject
         return Math.Round(n, digits);
     }
 
-    public static PathCommand Parse(string command)
-    {
-        if (Close.TryParse(command, out var close))
-            return close;
-        else if (CubicBezier.TryParse(command, out var curve))
-            return curve;
-        else if (EllipticalArc.TryParse(command, out var arc))
-            return arc;
-        else if (HorizontalLine.TryParse(command, out var hl))
-            return hl;
-        else if (Line.TryParse(command, out var line))
-            return line;
-        else if (Move.TryParse(command, out var move))
-            return move;
-        else if (QuadraticBezier.TryParse(command, out var qb))
-            return qb;
-        else if (SmoothCubicBezier.TryParse(command, out var scb))
-            return scb;
-        else if (SmoothQuadraticBezier.TryParse(command, out var sqb))
-            return sqb;
-        else if (VerticalLine.TryParse(command, out var vl))
-            return vl;
-
-        throw new ArgumentException(
-            $"Unable to parse [{command}] into a PathCommand",
-            nameof(command));
-    }
+    public static PathCommand Parse(string command) =>
+        command[0].ToString().ToLower() switch
+        {
+            Close.CommandChar => Close.Parse(command),
+            CubicBezier.CommandChar => CubicBezier.Parse(command),
+            EllipticalArc.CommandChar => EllipticalArc.Parse(command),
+            HorizontalLine.CommandChar => HorizontalLine.Parse(command),
+            Line.CommandChar => Line.Parse(command),
+            Move.CommandChar => Move.Parse(command),
+            QuadraticBezier.CommandChar => QuadraticBezier.Parse(command),
+            SmoothCubicBezier.CommandChar => SmoothCubicBezier.Parse(command),
+            SmoothQuadraticBezier.CommandChar => SmoothQuadraticBezier.Parse(command),
+            VerticalLine.CommandChar => VerticalLine.Parse(command),
+            _ => throw new ArgumentException(
+                $"Unable to parse [{command}] into a PathCommand",
+                nameof(command)),
+        };
 }

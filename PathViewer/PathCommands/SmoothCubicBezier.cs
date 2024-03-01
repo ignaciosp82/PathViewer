@@ -1,15 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using System.Windows.Controls;
 
 namespace PathViewer.PathCommands;
 
 public partial class SmoothCubicBezier : PathCommand
 {
-    public override string CommandChar => "S";
+    public const string CommandChar = "s";
+
+    public override string Char { get; protected set; } = CommandChar;
     public override ItemType Type => ItemType.SmoothCubicBezier;
 
     [ObservableProperty]
@@ -47,33 +47,30 @@ public partial class SmoothCubicBezier : PathCommand
     public override double MaxX => Math.Max(Control2X, EndX);
     public override double MaxY => Math.Max(Control2Y, EndY);
 
-    private static readonly Regex _regex = new(
-        @"[Ss][\s]*      ([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))",
+    private static readonly Regex _regex = new(@"
+        ([Ss])\s*([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)",
         RegexOptions.IgnorePatternWhitespace);
 
-    public static bool TryParse(
-        string input,
-        [MaybeNullWhen(false)] out SmoothCubicBezier result)
+    public static new SmoothCubicBezier Parse(string input)
     {
         Match match = _regex.Match(input);
         if (match.Success)
         {
-            result = new()
+            return new()
             {
-                Control2X = double.Parse(match.Groups[1].Value),
-                Control2Y = double.Parse(match.Groups[2].Value),
-                EndX = double.Parse(match.Groups[3].Value),
-                EndY = double.Parse(match.Groups[4].Value)
+                IsAbsolute = match.Groups[1].Value != CommandChar,
+                Control2X = double.Parse(match.Groups[2].Value),
+                Control2Y = double.Parse(match.Groups[3].Value),
+                EndX = double.Parse(match.Groups[4].Value),
+                EndY = double.Parse(match.Groups[5].Value)
             };
-            return true;
         }
-        result = null;
-        return false;
+        throw new ArgumentException($"Not a {nameof(SmoothCubicBezier)} command");
     }
 
     public override string ToString() =>
-        $"{CommandChar}{Control2X},{Control2Y},{EndX},{EndY}";
+        $"{Char}{Control2X},{Control2Y},{EndX},{EndY}";
 }

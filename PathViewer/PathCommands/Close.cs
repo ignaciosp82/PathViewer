@@ -1,23 +1,21 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System;
 
 namespace PathViewer.PathCommands;
 
 public class Close : PathCommand
 {
-    public override string CommandChar => "Z";
+    public const string CommandChar = "z";
+
+    public override string Char { get; protected set; } = CommandChar;
     public override ItemType Type => ItemType.Close;
 
-    public static bool TryParse(
-        string input,
-        [MaybeNullWhen(false)] out Close result)
+    public static new Close Parse(string input)
     {
-        if (input.Trim().ToLower() == "z")
+        if (input.Trim().ToLower() == CommandChar)
         {
-            result = new();
-            return true;
+            return new();
         }
-        result = null;
-        return false;
+        throw new ArgumentException($"Not a {nameof(Close)} command");
     }
 
     public override string ToString() => CommandChar;

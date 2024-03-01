@@ -1,14 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using System.Diagnostics.CodeAnalysis;
+using System;
 using System.Text.RegularExpressions;
-using System.Windows;
 
 namespace PathViewer.PathCommands;
 
 public partial class EllipticalArc : PathCommand
 {
-    public override string CommandChar => "A";
+    public const string CommandChar = "a";
+    public override string Char { get; protected set; } = CommandChar;
     public override ItemType Type => ItemType.EllipticalArc;
 
     public override bool HasX => true;
@@ -57,40 +57,36 @@ public partial class EllipticalArc : PathCommand
     [ObservableProperty]
     private double _endY;
 
-    private static readonly Regex _regex = new(
-        @"[Aa][\s]*      ([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)(1|0)(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)(1|0)(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))",
+    private static readonly Regex _regex = new(@"
+        ([Aa])\s*([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([01])\s*,?\s*
+        ([01])\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)",
         RegexOptions.IgnorePatternWhitespace);
 
-    public static bool TryParse(
-    string input,
-    [MaybeNullWhen(false)] out EllipticalArc result)
+    public static new EllipticalArc Parse(string input)
     {
         Match match = _regex.Match(input);
         if (match.Success)
         {
-            result = new()
+            return new()
             {
-                SizeX = double.Parse(match.Groups[1].Value),
-                SizeY = double.Parse(match.Groups[2].Value),
-                RotationAngle = double.Parse(match.Groups[3].Value),
-                IsLargeArc = match.Groups[4].Value == "1",
-                IsPositiveSweepDirection = match.Groups[5].Value == "1",
-                EndX = double.Parse(match.Groups[6].Value),
-                EndY = double.Parse(match.Groups[7].Value)
+                IsAbsolute = match.Groups[1].Value != CommandChar,
+                SizeX = double.Parse(match.Groups[2].Value),
+                SizeY = double.Parse(match.Groups[3].Value),
+                RotationAngle = double.Parse(match.Groups[4].Value),
+                IsLargeArc = match.Groups[5].Value == "1",
+                IsPositiveSweepDirection = match.Groups[6].Value == "1",
+                EndX = double.Parse(match.Groups[7].Value),
+                EndY = double.Parse(match.Groups[8].Value)
             };
-            return true;
         }
-        result = null;
-        return false;
+        throw new ArgumentException($"Not a {nameof(EllipticalArc)} command");
     }
 
-
     public override string ToString() =>
-        $"{CommandChar}{SizeX},{SizeY},{RotationAngle},{(IsLargeArc ? "1" : "0")},{(IsPositiveSweepDirection ? "1" : "0")},{EndX},{EndY}";
+        $"{Char}{SizeX},{SizeY},{RotationAngle},{(IsLargeArc ? "1" : "0")},{(IsPositiveSweepDirection ? "1" : "0")},{EndX},{EndY}";
 }

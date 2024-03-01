@@ -1,16 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
-using System.Windows.Controls;
 
 namespace PathViewer.PathCommands;
 
 public partial class QuadraticBezier : PathCommand
 {
-    public override string CommandChar => "Q";
-    public override ItemType Type => ItemType.QudraticBezier;
+    public const string CommandChar = "q";
+
+    public override string Char { get; protected set; } = CommandChar;
+    public override ItemType Type => ItemType.QuadraticBezier;
 
     [ObservableProperty]
     private double _controlX;
@@ -48,33 +48,30 @@ public partial class QuadraticBezier : PathCommand
     public override double MaxY => Math.Max(ControlY, EndY);
 
 
-    private static readonly Regex _regex = new(
-    @"[Qq][\s]*          ([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))",
-    RegexOptions.IgnorePatternWhitespace);
+    private static readonly Regex _regex = new(@"
+        ([Qq])\s*([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)",
+        RegexOptions.IgnorePatternWhitespace);
 
-    public static bool TryParse(
-        string input,
-        [MaybeNullWhen(false)] out QuadraticBezier result)
+    public static new QuadraticBezier Parse(string input)
     {
         Match match = _regex.Match(input);
         if (match.Success)
         {
-            result = new()
+            return new()
             {
-                ControlX = double.Parse(match.Groups[1].Value),
-                ControlY = double.Parse(match.Groups[2].Value),
-                EndX = double.Parse(match.Groups[3].Value),
-                EndY = double.Parse(match.Groups[4].Value)
+                IsAbsolute = match.Groups[1].Value != CommandChar,
+                ControlX = double.Parse(match.Groups[2].Value),
+                ControlY = double.Parse(match.Groups[3].Value),
+                EndX = double.Parse(match.Groups[4].Value),
+                EndY = double.Parse(match.Groups[5].Value)
             };
-            return true;
         }
-        result = null;
-        return false;
+        throw new ArgumentException($"Not a {nameof(QuadraticBezier)} command");
     }
 
     public override string ToString() =>
-        $"{CommandChar}{ControlX},{ControlY},{EndX},{EndY}";
+        $"{Char}{ControlX},{ControlY},{EndX},{EndY}";
 }

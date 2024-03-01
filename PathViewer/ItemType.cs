@@ -9,7 +9,7 @@ public enum ItemType
     HorizontalLine,
     Line,
     Move,
-    QudraticBezier,
+    QuadraticBezier,
     SmoothCubicBezier,
     SmoothQuadraticBezier,
     VerticalLine

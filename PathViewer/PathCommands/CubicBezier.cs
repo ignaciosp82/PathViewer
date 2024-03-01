@@ -1,14 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace PathViewer.PathCommands;
 
 public partial class CubicBezier : PathCommand
 {
-    public override string CommandChar => "C";
+    public const string CommandChar = "c";
+
+    public override string Char { get; protected set; } = CommandChar;
     public override ItemType Type => ItemType.CubicBezier;
 
     public override bool HasX => true;
@@ -56,36 +57,35 @@ public partial class CubicBezier : PathCommand
     [ObservableProperty]
     private double _endY;
 
-    private static readonly Regex _regex = new(
-        @"[Cc][\s]*      ([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))",
+    private static readonly Regex _regex = new(@"
+        ([Cc])\s*([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)",
         RegexOptions.IgnorePatternWhitespace);
 
-    public static bool TryParse(
-        string input,
-        [MaybeNullWhen(false)] out CubicBezier result)
+    public static new CubicBezier Parse(string input)
     {
         Match match = _regex.Match(input);
         if (match.Success)
         {
-            result = new()
+            return new()
             {
-                Control1X = double.Parse(match.Groups[1].Value),
-                Control1Y = double.Parse(match.Groups[2].Value),
-                Control2X = double.Parse(match.Groups[3].Value),
-                Control2Y = double.Parse(match.Groups[4].Value),
+                IsAbsolute = match.Groups[1].Value != CommandChar,
+                Control1X = double.Parse(match.Groups[2].Value),
+                Control1Y = double.Parse(match.Groups[3].Value),
+                Control2X = double.Parse(match.Groups[4].Value),
+                Control2Y = double.Parse(match.Groups[5].Value),
                 EndX = double.Parse(match.Groups[5].Value),
                 EndY = double.Parse(match.Groups[6].Value)
             };
-            return true;
-        }        result = null;
-        return false;
+        }
+        throw new ArgumentException($"Not a {nameof(CubicBezier)} command");
     }
 
     public override string ToString() =>
-        $"{CommandChar}{Control1X},{Control1Y},{Control2X},{Control2Y},{EndX},{EndY}";
+        $"{Char}{Control1X},{Control1Y},{Control2X},{Control2Y},{EndX},{EndY}";
 }

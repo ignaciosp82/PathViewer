@@ -33,7 +33,7 @@ public partial class PathViewModel : ViewModelBase
         {
             try
             {
-                PathCommands.Add(PathCommand.Parse(match.Groups[1].Value));
+                PathCommands.Add(PathCommand.Parse(match.Groups[0].Value));
             }
             catch (Exception ex)
             {
@@ -44,14 +44,16 @@ public partial class PathViewModel : ViewModelBase
         }
     }
 
-    private static Regex _regex = new(@"([A-Za-z][0-9,\-+.\s]*)");
+    private static Regex _regex = new(@"([A-Za-z])(?:\s*([+\-]?\d*\.?\d+(?:[eE][+\-]?\d+)?)(?:\s*,\s*|\s+|\b(?![,\.\s])))*");
 
     #region Commands
     [RelayCommand(CanExecute = nameof(CanReset))]
     private void ResetZoom() => Zoom = 1;
 
     [RelayCommand]
-    private void AddItem(int location = -1)
+    private void AddItem() => AddItemAt(-1);
+
+    private void AddItemAt(int location = -1)
     {
         using AddOrEditViewModel add = new();
         if (ShowModal(
@@ -74,7 +76,7 @@ public partial class PathViewModel : ViewModelBase
     private void InsertItem()
     {
         if (SelectedIndex == -1) return;
-        AddItem(SelectedIndex);
+        AddItemAt(SelectedIndex);
     }
 
     [RelayCommand(CanExecute = nameof(SomethingSelected))]

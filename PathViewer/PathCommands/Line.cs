@@ -1,13 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-using System.Diagnostics.CodeAnalysis;
+using System;
 using System.Text.RegularExpressions;
 
 namespace PathViewer.PathCommands;
 
 public partial class Line : PathCommand
 {
-    public override string CommandChar => "L";
+    public const string CommandChar = "l";
+
+    public override string Char { get; protected set; } = CommandChar;
     public override ItemType Type => ItemType.Line;
 
     [ObservableProperty]
@@ -35,29 +37,26 @@ public partial class Line : PathCommand
         EndY += distY;
     }
 
-    private static readonly Regex _regex = new(
-        @"[Ll][\s]*      ([-+]?(?:\d+\.\d+|\.\d+|\d+))(?:\s+,\s+|,\s+|,|\s*){0,1}
-        (?:(?<=[,\s])|\b)([-+]?(?:\d+\.\d+|\.\d+|\d+))",
+    private static readonly Regex _regex = new(@"
+        ([Ll])\s*([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)\s*,?\s*
+        ([+-]?[\d]+(?:\.[\d]+)?(?:e[+-][\d]+)?)",
         RegexOptions.IgnorePatternWhitespace);
 
-    public static bool TryParse(
-        string input,
-        [MaybeNullWhen(false)] out Line result)
+    public static new Line Parse(string input)
     {
         Match match = _regex.Match(input);
         if (match.Success)
         {
-            result = new()
+            return new()
             {
-                EndX = double.Parse(match.Groups[1].Value),
-                EndY = double.Parse(match.Groups[2].Value)
+                IsAbsolute = match.Groups[1].Value != CommandChar,
+                EndX = double.Parse(match.Groups[2].Value),
+                EndY = double.Parse(match.Groups[3].Value)
             };
-            return true;
         }
-        result = null;
-        return false;
+        throw new ArgumentException($"Not a {nameof(Line)} command");
     }
 
     public override string ToString() =>
-        $"{CommandChar}{EndX},{EndY}";
+        $"{Char}{EndX},{EndY}";
 }
