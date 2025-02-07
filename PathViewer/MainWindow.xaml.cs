@@ -9,10 +9,12 @@ namespace PathViewer
     {
         public MainWindow()
         {
-            DataContext = new PathViewModel();
             InitializeComponent();
         }
 
-        private void ZoomResetClick(object sender, RoutedEventArgs e) => (DataContext as PathViewModel).Zoom = 1;
+        private void ListBox_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+
+        }
     }
 }
