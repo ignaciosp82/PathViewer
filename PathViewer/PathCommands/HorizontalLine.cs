@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace PathViewer.PathCommands;
@@ -34,7 +33,7 @@ public partial class HorizontalLine : PathCommand
 
     public static new HorizontalLine Parse(string input)
     {
-        Match match= _regex.Match(input);
+        Match match = _regex.Match(input);
         if (match.Success)
         {
             return new()

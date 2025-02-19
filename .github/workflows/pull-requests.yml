@@ -1,0 +1,28 @@
+name: CI build for pull requests into main or Release
+
+on:
+  pull_request:
+    branches:
+     - main
+     - 'Release/**'
+  push:
+    branches:
+     - 'Release/**'
+
+jobs:
+   build:
+    name: Build Windows Project
+
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    steps:
+    - name: Checkout PathViewer repo
+      uses: actions/checkout@v4
+
+    - name: Build PathViewer
+      run: |
+        dotnet restore --nologo -v:n PathViewer.sln
+        dotnet build --configuration ${{matrix.configuration}} --nologo -v:n PathViewer.sln
