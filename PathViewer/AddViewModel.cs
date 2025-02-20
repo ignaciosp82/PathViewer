@@ -166,7 +166,7 @@ public partial class AddOrEditViewModel : ViewModelBase
             ["End X", "End Y"],
             ["Absolute Position"]),
         new ItemTypeItem(
-            "MovePath",
+            "Move Current Point",
             ItemType.Move,
             ["X", "Y"],
             ["Absolute Position"]),

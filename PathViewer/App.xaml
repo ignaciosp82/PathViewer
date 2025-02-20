@@ -10,6 +10,8 @@
         <ResourceDictionary Source="Resources/Styles.xaml" />
         <ResourceDictionary Source="Resources/DataTemplates.xaml" />
         <ResourceDictionary Source="Resources/Converters.xaml" />
+        <ResourceDictionary Source="Resources/Symbols.xaml" />
+        <ResourceDictionary Source="Resources/Strings.xaml" />
       </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
   </Application.Resources>

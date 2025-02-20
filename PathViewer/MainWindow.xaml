@@ -8,7 +8,29 @@
   Width="1024" Height="1024"
   WindowStartupLocation="CenterScreen">
   <Window.Resources>
+    <ContextMenu x:Key="CommandMenu">
+      <MenuItem
+        Header="Edit" Icon="{StaticResource EditIcon}" ToolTip="{StaticResource EditTip}"
+        Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.EditCommand}" />
+
+      <MenuItem
+        Header="Delete" Icon="{StaticResource DeleteIcon}" ToolTip="{StaticResource DeleteTip}"
+        Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.DeleteCommand}" />
+
+      <MenuItem
+        Header="Insert Item" Icon="{StaticResource InsertIcon}" ToolTip="{StaticResource InsertTip}"
+        Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.InsertItemCommand}" />
+
+      <MenuItem
+        Header="Move Up" Icon="{StaticResource MoveUpIcon}" ToolTip="{StaticResource MoveUpTip}"
+        Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.MoveUpCommand}" />
+
+      <MenuItem
+        Header="Move Down" Icon="{StaticResource MoveDownIcon}" ToolTip="{StaticResource MoveDownTip}"
+        Command="{Binding RelativeSource={RelativeSource AncestorType=Window}, Path=DataContext.MoveDownCommand}" />
+    </ContextMenu>
     <Style x:Key="CommandItemTemplate" TargetType="{x:Type ListBoxItem}">
+      <Setter Property="ContextMenu" Value="{StaticResource CommandMenu}" />
       <Setter Property="Template">
         <Setter.Value>
           <ControlTemplate TargetType="{x:Type ListBoxItem}">
@@ -116,40 +138,40 @@
         </ListBox>
         <ToolBar Grid.Row="2">
           <Button
-            Style="{StaticResource iconButton}" Content="&#xe109;"
-            ToolTip="Adds a new item to the data collection."
+            Style="{StaticResource iconButton}" Content="{StaticResource AddSym}"
+            ToolTip="{StaticResource AddTip}"
             Command="{Binding AddItemCommand}" />
           <Button
-            Style="{StaticResource iconButton}" Content="&#xe291;"
-            ToolTip="Inserts a new item to the data collection before the current selection."
+            Style="{StaticResource iconButton}" Content="{StaticResource InsertSym}"
+            ToolTip="{StaticResource InsertTip}"
             Command="{Binding InsertItemCommand}" />
           <Button
-            Style="{StaticResource iconButton}" Content="&#xe107;"
-            ToolTip="Remove the selected item from the data collection."
+            Style="{StaticResource iconButton}" Content="{StaticResource DeleteSym}"
+            ToolTip="{StaticResource DeleteTip}"
             Command="{Binding DeleteCommand}" />
           <Button
-            Style="{StaticResource iconButton}" Content="&#xe104;"
-            ToolTip="Edit the selected item."
+            Style="{StaticResource iconButton}" Content="{StaticResource EditSym}"
+            ToolTip="{StaticResource EditTip}"
             Command="{Binding EditCommand}" />
           <Button
-            Style="{StaticResource iconButton}" Content="&#xe106;"
-            ToolTip="Remove all items from the data collection."
+            Style="{StaticResource iconButton}" Content="{StaticResource ClearSym}"
+            ToolTip="{StaticResource ClearTip}"
             Command="{Binding ClearCommand}" />
           <Button
-            Style="{StaticResource iconButton}" Content="&#xe110;"
-            ToolTip="Move the selected item up in the data collection."
+            Style="{StaticResource iconButton}" Content="{StaticResource MoveUpSym}"
+            ToolTip="{StaticResource MoveUpTip}"
             Command="{Binding MoveUpCommand}" />
           <Button
-            Style="{StaticResource iconButton}" Content="&#xe1fd;"
-            ToolTip="Move the selected item down in the data collection."
+            Style="{StaticResource iconButton}" Content="{StaticResource MoveDownSym}"
+            ToolTip="{StaticResource MoveDownTip}"
             Command="{Binding MoveDownCommand}" />
           <Button
-            Style="{StaticResource iconButton}" Content="&#xe1c8;"
-            ToolTip="Resize the entire path."
+            Style="{StaticResource iconButton}" Content="{StaticResource ResizeSym}"
+            ToolTip="{StaticResource ResizeTip}"
             Command="{Binding ScalePathCommand}" />
           <Button
-            Style="{StaticResource iconButton}" Content="&#xe8ab;"
-            ToolTip="Move the entire path (relative to current position)."
+            Style="{StaticResource iconButton}" Content="{StaticResource MoveSym}"
+            ToolTip="{StaticResource MoveTip}"
             Command="{Binding MovePathCommand}" />
         </ToolBar>
       </Grid>
