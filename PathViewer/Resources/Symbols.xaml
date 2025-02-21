@@ -1,0 +1,28 @@
+﻿<ResourceDictionary
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <sys:String x:Key="EditSym">&#xe104;</sys:String>
+  <sys:String x:Key="DeleteSym">&#xe107;</sys:String>
+  <sys:String x:Key="AddSym">&#xe109;</sys:String>
+  <sys:String x:Key="InsertSym">&#xe291;</sys:String>
+  <sys:String x:Key="ClearSym">&#xe106;</sys:String>
+  <sys:String x:Key="MoveUpSym">&#xe110;</sys:String>
+  <sys:String x:Key="MoveDownSym">&#xe1fd;</sys:String>
+  <sys:String x:Key="ResizeSym">&#xe1c8;</sys:String>
+  <sys:String x:Key="MoveSym">&#xe8ab;</sys:String>
+
+  <Style x:Key="Icon" TargetType="TextBlock">
+    <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+  </Style>
+
+  <TextBlock x:Key="EditIcon" Text="{StaticResource EditSym}" Style="{StaticResource Icon}" />
+  <TextBlock x:Key="DeleteIcon" Text="{StaticResource DeleteSym}" Style="{StaticResource Icon}" />
+  <TextBlock x:Key="AddIcon" Text="{StaticResource AddSym}" Style="{StaticResource Icon}" />
+  <TextBlock x:Key="InsertIcon" Text="{StaticResource InsertSym}" Style="{StaticResource Icon}" />
+  <TextBlock x:Key="ClearIcon" Text="{StaticResource ClearSym}" Style="{StaticResource Icon}" />
+  <TextBlock x:Key="MoveUpIcon" Text="{StaticResource MoveUpSym}" Style="{StaticResource Icon}" />
+  <TextBlock x:Key="MoveDownIcon" Text="{StaticResource MoveDownSym}" Style="{StaticResource Icon}" />
+  <TextBlock x:Key="ResizeIcon" Text="{StaticResource ResizeSym}" Style="{StaticResource Icon}" />
+  <TextBlock x:Key="MoveIcon" Text="{StaticResource MoveSym}" Style="{StaticResource Icon}" />
+</ResourceDictionary>

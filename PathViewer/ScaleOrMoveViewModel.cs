@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 
-using System;
 using System.Windows;
 
 namespace PathViewer;
@@ -40,10 +39,10 @@ public partial class ScaleOrMoveViewModel : ViewModelBase
                 && IsAspectLocked
                 && !_updating)
             {
-                    _updating = true;
-                    double scale = _width / from;
-                    Height *= scale;
-                    _updating = false;
+                _updating = true;
+                double scale = _width / from;
+                Height *= scale;
+                _updating = false;
             }
         }
     }

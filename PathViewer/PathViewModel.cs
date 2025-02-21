@@ -80,10 +80,11 @@ public partial class PathViewModel : ViewModelBase
     }
 
     [RelayCommand(CanExecute = nameof(SomethingSelected))]
-    private void Edit()
+    private void Edit(PathCommand? command = null)
     {
-        if (SelectedItem is null) return;
-        using AddOrEditViewModel edit = new(SelectedItem);
+        command ??= SelectedItem;
+        if (command is null) return;
+        using AddOrEditViewModel edit = new(command);
         if (ShowModal(edit, "Edit Path Command"))
         {
             // Easier to insert new (edited) item than

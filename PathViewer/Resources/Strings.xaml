@@ -1,0 +1,14 @@
+﻿<ResourceDictionary
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <sys:String x:Key="AddTip">Adds a new item to the data collection.</sys:String>
+  <sys:String x:Key="InsertTip">Inserts a new item to the data collection before the current selection.</sys:String>
+  <sys:String x:Key="DeleteTip">Remove the selected item from the data collection.</sys:String>
+  <sys:String x:Key="EditTip">Edit the selected item.</sys:String>
+  <sys:String x:Key="ClearTip">Remove all items from the data collection.</sys:String>
+  <sys:String x:Key="MoveUpTip">Move the selected item up in the data collection.</sys:String>
+  <sys:String x:Key="MoveDownTip">Move the selected item down in the data collection.</sys:String>
+  <sys:String x:Key="ResizeTip">Resize the entire path.</sys:String>
+  <sys:String x:Key="MoveTip">Move the entire path (relative to current position).</sys:String>
+</ResourceDictionary>
